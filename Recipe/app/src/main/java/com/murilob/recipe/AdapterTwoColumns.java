@@ -16,22 +16,21 @@ import com.bumptech.glide.Glide;
 import java.util.ArrayList;
 
 
-public class DataAdapter extends RecyclerView.Adapter<DataAdapter.ViewHolder> {
+public class AdapterTwoColumns extends RecyclerView.Adapter<AdapterTwoColumns.ViewHolder> {
 
     private ArrayList<Receita> arrayList;
     private Context context;
-    private int layout;
+    LayoutInflater layoutInflater;
 
-    public DataAdapter(ArrayList<Receita> arrayList, int layout) {
+    public AdapterTwoColumns(ArrayList<Receita> arrayList, Context ctx) {
         this.arrayList = arrayList;
-        this.layout = layout;
+        this.layoutInflater = LayoutInflater.from(ctx);
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(layout, parent, false);
+        View view = layoutInflater.inflate(R.layout.card_recipe, parent, false);
         context = parent.getContext();
         return new ViewHolder(view);
     }

@@ -21,4 +21,20 @@ public class Receita {
     public String getThumbnail() {
         return thumbnail;
     }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setHref(String href) {
+        this.href = href;
+    }
+
+    public void setIngredients(String ingredients) {
+        this.ingredients = ingredients;
+    }
+
+    public void setThumbnail(String thumbnail) {
+        this.thumbnail = thumbnail;
+    }
 }

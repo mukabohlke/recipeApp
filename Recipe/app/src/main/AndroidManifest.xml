@@ -10,7 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Recipe"
         android:usesCleartextTraffic="true">
-        <activity android:name=".SecondActivity"></activity>
+        <activity android:name=".ResultsActivity"></activity>
+        <activity android:name=".DetailsActivity" />
+        <activity android:name=".SecondActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

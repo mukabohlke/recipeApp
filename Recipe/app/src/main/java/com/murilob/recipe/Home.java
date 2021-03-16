@@ -1,8 +1,11 @@
 package com.murilob.recipe;
 
-import android.media.Image;
+import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,6 +17,13 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +44,10 @@ public class Home extends Fragment {
     private DataAdapter dataAdapter;
     private ImageView search;
     private EditText input;
-    String searchText = "garlic";
+    private ImageView logout;
+    private TextView user;
+    String searchText = "";
+    GoogleSignInClient mGoogleSignInClient;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -85,22 +98,73 @@ public class Home extends Fragment {
 
 
         //textViewResult = (TextView) view.findViewById(R.id.text_view_result);
-        listRecipes = (RecyclerView) view.findViewById(R.id.recycler_id);
-        search = (ImageView) view.findViewById(R.id.search_id);
-        input = (EditText) view.findViewById(R.id.input_id);
+        listRecipes = (RecyclerView) view.findViewById(R.id.results_recycler_id);
+        search = (ImageView) view.findViewById(R.id.favorites_search_id);
+        input = (EditText) view.findViewById(R.id.favorites_textview_id);
+        logout = (ImageView) view.findViewById(R.id.favorites_logout_id);
+        user = (TextView) view.findViewById(R.id.home_user_id);
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+
+        mGoogleSignInClient = GoogleSignIn.getClient(view.getContext(), gso);
+
+
+        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getContext());
+        if (acct != null) {
+            String userName ="Bem vindo, " + acct.getDisplayName();
+            String personGivenName = acct.getGivenName();
+            String personFamilyName = acct.getFamilyName();
+            String personEmail = acct.getEmail();
+            String personId = acct.getId();
+            Uri personPhoto = acct.getPhotoUrl();
+
+            user.setText(userName);
+        }
+
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch (v.getId()) {
+                    // ...
+                    case R.id.favorites_logout_id:
+                        signOut();
+                        break;
+                }
+            }
+        });
 
         search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 searchText = input.getText().toString();
-                input.setText("");
-                getDados(searchText);
+                if (searchText.equals("")){
+                    Toast.makeText(getContext(),"Texto em branco!",Toast.LENGTH_SHORT).show();
+                } else{
+                    input.setText("");
+                    Intent intent = new Intent(getContext(), ResultsActivity.class);
+                    intent.putExtra("search", searchText);
+                    getContext().startActivity(intent);
+                }
+
             }
         });
 
         getDados(searchText);
 
         return view;
+    }
+
+    private void signOut() {
+        mGoogleSignInClient.signOut()
+                .addOnCompleteListener((Activity) getContext(), new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Intent intent = new Intent(getActivity(), MainActivity.class);
+                        startActivity(intent);
+                    }
+                });
     }
 
     private void getDados(String search) {
@@ -131,7 +195,7 @@ public class Home extends Fragment {
                 }
 
                 for(int i=0; i<receitas.size();i++){
-                    dataAdapter = new DataAdapter((ArrayList<Receita>) receitas);
+                    dataAdapter = new DataAdapter((ArrayList<Receita>) receitas, R.layout.card_recipe);
                     listRecipes.setAdapter(dataAdapter);
                     dataAdapter.notifyDataSetChanged();
                 }
