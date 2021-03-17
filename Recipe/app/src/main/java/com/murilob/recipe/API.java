@@ -6,7 +6,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
-public interface JsonPlaceHolderApi {
+public interface API {
     @GET("?")
-    Call<ReceitaWrapper> getReceitas(@Query("q") String latlng);
+    Call<ReceitaWrapper> getReceitas(@Query("q") String title, @Query("i") String ingredients,  @Query("p") String page);
 }

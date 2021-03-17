@@ -1,20 +1,18 @@
 package com.murilob.recipe;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +26,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ResultsActivity extends AppCompatActivity {
     private TextView search;
     private ImageView back;
-    GoogleSignInClient mGoogleSignInClient;
     private RecyclerView listTwoRecipes;
     private DataAdapter dataAdapter;
     private ImageView filter;
@@ -43,16 +40,19 @@ public class ResultsActivity extends AppCompatActivity {
         listTwoRecipes = (RecyclerView) findViewById(R.id.results_recycler_id);
         filter = (ImageView) findViewById(R.id.results_filter_id);
 
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .build();
+        //Modo escuro
+        if ((getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK)==Configuration.UI_MODE_NIGHT_YES) {
+            search.setTextColor(ContextCompat.getColor(this, R.color.black));
+        }
 
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-
+        //texto procurado
         Intent intent = getIntent();
         search.setText(intent.getExtras().getString("search"));
-        getDados(intent.getExtras().getString("search"));
 
+        //função para consumir API com o resultado da busca
+        getDados(intent.getExtras().getString("search"), intent.getExtras().getString("filters"));
+
+        //funções de clique dos botões
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -63,25 +63,29 @@ public class ResultsActivity extends AppCompatActivity {
         filter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(v.getContext(), FilterActivity.class);
+                intent.putExtra("search", getIntent().getExtras().getString("search"));
+                startActivity(intent);
+                finish();
             }
         });
-
     }
 
-    private void getDados(String search) {
+    private void getDados(String search, String ingredients) {
+        //definir layout
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false);
         Context cont = this;
         listTwoRecipes.setLayoutManager(gridLayoutManager);
 
+        //consumir API com retrofit
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://www.recipepuppy.com/api/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        JsonPlaceHolderApi jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
+        API api = retrofit.create(API.class);
 
-        Call<ReceitaWrapper> call = jsonPlaceHolderApi.getReceitas(search);
+        Call<ReceitaWrapper> call = api.getReceitas(search, ingredients, "1");
 
         call.enqueue(new Callback<ReceitaWrapper>() {
             @Override
@@ -91,6 +95,7 @@ public class ResultsActivity extends AppCompatActivity {
                     return;
                 }
 
+                //montar array list
                 List<Receita> receitas = response.body().getReceita();
 
                 if (receitas.size() == 0) {
@@ -108,7 +113,6 @@ public class ResultsActivity extends AppCompatActivity {
             public void onFailure(Call<ReceitaWrapper> call, Throwable t) {
                 Toast.makeText(cont, "Ocorreu algum erro!", Toast.LENGTH_SHORT).show();
             }
-
         });
     }
 }

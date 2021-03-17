@@ -23,10 +23,12 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="350dp">
+                android:layout_height="350dp"
+                android:clipChildren="false"
+                android:clipToPadding="false">
 
                 <ImageView
-                    android:id="@+id/card_image_id"
+                    android:id="@+id/details_card_image_id"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="fitXY"
@@ -39,13 +41,16 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:clipChildren="false"
+                    android:clipToPadding="false">
 
                     <ImageView
                         android:id="@+id/details_back_id"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                        android:src="@drawable/ic_back" />
+                        android:src="@drawable/ic_back"
+                        android:foreground="?attr/selectableItemBackgroundBorderless"/>
                     <View
                         android:layout_width="0dp"
                         android:layout_height="0dp"
@@ -56,13 +61,15 @@
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:layout_marginRight="10dp"
-                        android:src="@drawable/ic_share" />
+                        android:src="@drawable/ic_share"
+                        android:foreground="?attr/selectableItemBackgroundBorderless"/>
 
                     <ImageView
                         android:id="@+id/details_favorite_id"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                        android:src="@drawable/ic_favorite" />
+                        android:src="@drawable/ic_favorite"
+                        android:foreground="?attr/selectableItemBackgroundBorderless"/>
                 </LinearLayout>
 
             </RelativeLayout>
@@ -81,7 +88,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/textView5"
+                android:id="@+id/details_fixed_ingredients_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
@@ -92,17 +99,16 @@
                 android:textStyle="bold" />
 
             <ListView
-                android:id="@+id/list_ingredients"
+                android:id="@+id/details_list_ingredients"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="20dp"
-                android:background="@drawable/shape"
                 android:divider="@android:color/transparent" />
 
             <TextView
-                android:id="@+id/textView7"
+                android:id="@+id/details_fixed_more_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
@@ -113,12 +119,12 @@
                 android:textStyle="bold" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/listTwoRecipes_id"
+                android:id="@+id/details_listTwoRecipes_id"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
             <Button
-                android:id="@+id/acess_site_id"
+                android:id="@+id/details_acess_site_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"

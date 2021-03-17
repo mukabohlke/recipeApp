@@ -11,7 +11,8 @@
     android:layout_marginRight="20dp"
     android:layout_marginBottom="15dp"
     android:background="@color/black"
-    app:cardCornerRadius="20dp">
+    app:cardCornerRadius="20dp"
+    android:foreground="@drawable/click_effect">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -34,7 +35,7 @@
                 android:id="@+id/title_card_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/primary"
+                android:background="@drawable/gradiente"
                 android:paddingLeft="15dp"
                 android:paddingTop="10dp"
                 android:paddingRight="15dp"
