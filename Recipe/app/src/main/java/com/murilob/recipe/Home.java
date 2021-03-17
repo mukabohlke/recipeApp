@@ -2,10 +2,12 @@ package com.murilob.recipe;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,11 +37,6 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link Home#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class Home extends Fragment {
     private RecyclerView listRecipes;
     private DataAdapter dataAdapter;
@@ -46,15 +44,13 @@ public class Home extends Fragment {
     private EditText input;
     private ImageView logout;
     private TextView user;
-    String searchText = "";
-    GoogleSignInClient mGoogleSignInClient;
+    private String searchText = "";
+    private GoogleSignInClient mGoogleSignInClient;
+    private LinearLayout linear;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
@@ -63,15 +59,6 @@ public class Home extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment Home.
-     */
-    // TODO: Rename and change types and number of parameters
     public static Home newInstance(String param1, String param2) {
         Home fragment = new Home();
         Bundle args = new Bundle();
@@ -96,39 +83,42 @@ public class Home extends Fragment {
                              Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-
-        //textViewResult = (TextView) view.findViewById(R.id.text_view_result);
-        listRecipes = (RecyclerView) view.findViewById(R.id.results_recycler_id);
-        search = (ImageView) view.findViewById(R.id.favorites_search_id);
-        input = (EditText) view.findViewById(R.id.favorites_textview_id);
-        logout = (ImageView) view.findViewById(R.id.favorites_logout_id);
+        listRecipes = (RecyclerView) view.findViewById(R.id.home_recycler_id);
+        search = (ImageView) view.findViewById(R.id.home_search_id);
+        input = (EditText) view.findViewById(R.id.home_textview_id);
+        logout = (ImageView) view.findViewById(R.id.home_logout_id);
         user = (TextView) view.findViewById(R.id.home_user_id);
+        linear = (LinearLayout) view.findViewById(R.id.home_linear_layout_id);
 
+        //Modo escuro
+        if ((getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK)== Configuration.UI_MODE_NIGHT_YES) {
+            linear.setBackground(ContextCompat.getDrawable(view.getContext(), R.drawable.edit_text_style_dark) );
+        }
+
+        //Google login
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .build();
 
         mGoogleSignInClient = GoogleSignIn.getClient(view.getContext(), gso);
 
-
+        //pegar dados do Google
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getContext());
         if (acct != null) {
             String userName ="Bem vindo, " + acct.getDisplayName();
-            String personGivenName = acct.getGivenName();
-            String personFamilyName = acct.getFamilyName();
-            String personEmail = acct.getEmail();
-            String personId = acct.getId();
             Uri personPhoto = acct.getPhotoUrl();
 
             user.setText(userName);
         }
 
+        getDados(searchText);
+
+        //evento de clique dos botões
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 switch (v.getId()) {
-                    // ...
-                    case R.id.favorites_logout_id:
+                    case R.id.home_logout_id:
                         signOut();
                         break;
                 }
@@ -145,40 +135,42 @@ public class Home extends Fragment {
                     input.setText("");
                     Intent intent = new Intent(getContext(), ResultsActivity.class);
                     intent.putExtra("search", searchText);
+                    intent.putExtra("filters", "");
                     getContext().startActivity(intent);
                 }
 
             }
         });
 
-        getDados(searchText);
-
         return view;
     }
 
+    //logout Google
     private void signOut() {
         mGoogleSignInClient.signOut()
                 .addOnCompleteListener((Activity) getContext(), new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        Intent intent = new Intent(getActivity(), MainActivity.class);
+                        Intent intent = new Intent(getActivity(), LoginActivity.class);
                         startActivity(intent);
                     }
                 });
     }
 
     private void getDados(String search) {
+        //definir layout do recyler view
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         listRecipes.setLayoutManager(layoutManager);
 
+        //consumir API com retrofit
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://www.recipepuppy.com/api/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        JsonPlaceHolderApi jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
+        API api = retrofit.create(API.class);
 
-        Call<ReceitaWrapper> call = jsonPlaceHolderApi.getReceitas(searchText);
+        Call<ReceitaWrapper> call = api.getReceitas(search,"","1");
 
         call.enqueue(new Callback<ReceitaWrapper>() {
             @Override
@@ -188,6 +180,7 @@ public class Home extends Fragment {
                     return;
                 }
 
+                //montar array list
                 List<Receita> receitas = response.body().getReceita();
 
                 if(receitas.size()==0){
@@ -199,8 +192,6 @@ public class Home extends Fragment {
                     listRecipes.setAdapter(dataAdapter);
                     dataAdapter.notifyDataSetChanged();
                 }
-
-
             }
 
             @Override
@@ -209,6 +200,5 @@ public class Home extends Fragment {
             }
 
         });
-
     }
 }
