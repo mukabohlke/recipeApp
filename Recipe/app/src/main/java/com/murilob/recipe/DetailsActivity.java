@@ -26,6 +26,7 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -175,10 +176,10 @@ public class DetailsActivity extends AppCompatActivity {
                     }
                     //salvar novo favorito
                     receitas.add(receita);
-                    String json2 = gson.toJson(receitas);
-                    prefsEditor.putString("receitas", json2);
-                    prefsEditor.commit();
                 }
+                String json2 = gson.toJson(receitas);
+                prefsEditor.putString("receitas", json2);
+                prefsEditor.commit();
             }
         });
 
@@ -248,7 +249,7 @@ public class DetailsActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ReceitaWrapper> call, Response<ReceitaWrapper> response) {
                 if(!response.isSuccessful()){
-                    Toast.makeText(cont,"Ocorreu algum erro!",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(cont,"Something wrong!",Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -256,7 +257,7 @@ public class DetailsActivity extends AppCompatActivity {
                 List<Receita> receitas = response.body().getReceita();
 
                 if(receitas.size()==0){
-                    Toast.makeText(cont,"Nada encontrado!",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(cont,"Nothing found!",Toast.LENGTH_SHORT).show();
                 }
 
                 for(int i=0; i<receitas.size();i++){
@@ -268,7 +269,7 @@ public class DetailsActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ReceitaWrapper> call, Throwable t) {
-               Toast.makeText(cont,"Ocorreu algum erro!",Toast.LENGTH_SHORT).show();
+               Toast.makeText(cont,"Something wrong!",Toast.LENGTH_SHORT).show();
             }
         });
     }

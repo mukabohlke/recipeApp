@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.murilob.recipe">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_logo"
@@ -10,7 +12,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Recipe"
         android:usesCleartextTraffic="true">
-        <activity android:name=".FilterActivity"></activity>
+        <activity android:name=".LocalFavoritesActivity"></activity>
+        <activity android:name=".FilterActivity" />
         <activity android:name=".ResultsActivity" />
         <activity android:name=".DetailsActivity" />
         <activity android:name=".MainActivity" />
@@ -22,7 +25,5 @@
             </intent-filter>
         </activity>
     </application>
-
-    <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>

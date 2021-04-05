@@ -37,7 +37,6 @@ public class IngredientsAdapter extends ArrayAdapter<String> {
         TextView textView = (TextView) rowView.findViewById(R.id.ingredient_id);
         textView.setText(values.get(position));
 
-
         return rowView;
     }
 }

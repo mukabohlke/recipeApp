@@ -35,7 +35,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Favoritos extends Fragment {
+public class Favorites extends Fragment {
 
     private RecyclerView listTwoRecipes;
     private DataAdapter dataAdapter;
@@ -52,17 +52,41 @@ public class Favoritos extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public Favoritos() {
+    public Favorites() {
         // Required empty public constructor
     }
 
-    public static Favoritos newInstance(String param1, String param2) {
-        Favoritos fragment = new Favoritos();
+    public static Favorites newInstance(String param1, String param2) {
+        Favorites fragment = new Favorites();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+
+        //definir layout do recycler view
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2, GridLayoutManager.VERTICAL, false);
+        listTwoRecipes.setLayoutManager(gridLayoutManager);
+
+        //recuperar receitas favoritas
+        Gson gson = new Gson();
+        SharedPreferences sharedPreferences = getContext().getSharedPreferences("dados", getContext().MODE_PRIVATE);
+        String json = sharedPreferences.getString("receitas", "");
+
+        Type type = new TypeToken<List<Receita>>(){}.getType();
+        List<Receita> receitas = gson.fromJson(json, type);
+
+        if(json.equals("")){
+            Toast.makeText(getContext(),"No favorites!",Toast.LENGTH_SHORT).show();
+        } else {
+            dataAdapter = new DataAdapter((ArrayList<Receita>) receitas, R.layout.card_recipe_little);
+            listTwoRecipes.setAdapter(dataAdapter);
+        }
     }
 
     @Override
@@ -102,7 +126,7 @@ public class Favoritos extends Fragment {
         //pegar dados do Google
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getContext());
         if (acct != null) {
-            String userName ="Bem vindo, " + acct.getDisplayName();
+            String userName ="Welcome, " + acct.getDisplayName();
             user.setText(userName);
         }
 
@@ -110,11 +134,7 @@ public class Favoritos extends Fragment {
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                switch (v.getId()) {
-                    case R.id.favorites_logout_id:
-                        signOut();
-                        break;
-                }
+                signOut();
             }
         });
 
@@ -123,7 +143,7 @@ public class Favoritos extends Fragment {
             public void onClick(View v) {
                 String searchText = input.getText().toString();
                 if (searchText.equals("")){
-                    Toast.makeText(getContext(),"Texto em branco!",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(),"Blank text!",Toast.LENGTH_SHORT).show();
                 } else{
                     input.setText("");
 
@@ -132,6 +152,11 @@ public class Favoritos extends Fragment {
                     SharedPreferences mPrefs = v.getContext().getSharedPreferences("dados", v.getContext().MODE_PRIVATE);
                     String getJson = mPrefs.getString("receitas", "");
                     SharedPreferences.Editor prefsEditor = mPrefs.edit();
+
+                    if(getJson.equals("")){
+                        Toast.makeText(v.getContext(),"No favorites!",Toast.LENGTH_SHORT).show();
+                        return;
+                    }
 
                     ArrayList<Receita> receitas = new ArrayList<>();
                     ArrayList<Receita> newReceitas = new ArrayList<>();
@@ -154,24 +179,6 @@ public class Favoritos extends Fragment {
             }
         });
 
-        //definir layout do recycler view
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2, GridLayoutManager.VERTICAL, false);
-        listTwoRecipes.setLayoutManager(gridLayoutManager);
-
-        //recuperar receitas favoritas
-        Gson gson = new Gson();
-        SharedPreferences sharedPreferences = view.getContext().getSharedPreferences("dados", view.getContext().MODE_PRIVATE);
-        String json = sharedPreferences.getString("receitas", "");
-
-        Type type = new TypeToken<List<Receita>>(){}.getType();
-        List<Receita> receitas = gson.fromJson(json, type);
-
-        if(receitas.size()==0){
-            Toast.makeText(view.getContext(),"Sem favoritos!",Toast.LENGTH_SHORT).show();
-        } else {
-            dataAdapter = new DataAdapter((ArrayList<Receita>) receitas, R.layout.card_recipe_little);
-            listTwoRecipes.setAdapter(dataAdapter);
-        }
 
         return view;
     }
