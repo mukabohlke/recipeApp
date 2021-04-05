@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -17,25 +18,31 @@ import com.google.android.gms.tasks.Task;
 
 public class LoginActivity extends AppCompatActivity {
 
-    GoogleSignInClient mGoogleSignInClient;
-    SignInButton sign;
+    private GoogleSignInClient mGoogleSignInClient;
     int RC_SIGN_IN=0;
+    private Button favoritos;
+    private Button sign;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        sign = findViewById(R.id.sign_in_button);
+        sign = (Button) findViewById(R.id.sign_in_button);
+        favoritos = (Button) findViewById(R.id.favorites_login_id);
 
         sign.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                switch (v.getId()) {
-                    case R.id.sign_in_button:
-                        signIn();
-                        break;
-                }
+                signIn();
+            }
+        });
+
+        favoritos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), LocalFavoritesActivity.class);
+                startActivity(intent);
             }
         });
 

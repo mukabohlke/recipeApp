@@ -12,7 +12,7 @@
         tools:layout="@layout/fragment_home" />
     <fragment
         android:id="@+id/favoritos_id"
-        android:name="com.murilob.recipe.Favoritos"
+        android:name="com.murilob.recipe.Favorites"
         android:label="fragment_favoritos"
         tools:layout="@layout/fragment_favoritos" />
 </navigation>

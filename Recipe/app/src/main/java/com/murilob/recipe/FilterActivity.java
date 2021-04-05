@@ -55,27 +55,27 @@ public class FilterActivity extends AppCompatActivity {
                 String filters="";
 
                 if(checkBox1.isChecked()){
-                   filters = checkBox1.getText().toString().toLowerCase();
+                   filters = checkBox1.getText().toString().toLowerCase() + ",";
                 }
                 if(checkBox2.isChecked()){
-                    filters = filters + "," + checkBox2.getText().toString().toLowerCase();
+                    filters = filters + checkBox2.getText().toString().toLowerCase() + ",";
                 }
                 if(checkBox3.isChecked()){
-                    filters = filters + "," + checkBox3.getText().toString().toLowerCase();
+                    filters = filters + checkBox3.getText().toString().toLowerCase() + ",";
                 }
                 if(checkBox4.isChecked()){
-                    filters = filters + "," + checkBox4.getText().toString().toLowerCase();
+                    filters = filters + checkBox4.getText().toString().toLowerCase() + ",";
                 }
                 if(checkBox5.isChecked()){
-                    filters = filters + "," + checkBox5.getText().toString().toLowerCase();
+                    filters = filters + checkBox5.getText().toString().toLowerCase() + ",";
                 }
                 if(checkBox6.isChecked()){
-                    filters = filters + "," + checkBox6.getText().toString().toLowerCase();
+                    filters = filters + checkBox6.getText().toString().toLowerCase() + ",";
                 }
 
                 Intent intent = new Intent(v.getContext(), ResultsActivity.class);
                 intent.putExtra("search", getIntent().getExtras().getString("search"));
-                intent.putExtra("filters", filters);
+                intent.putExtra("filters", (filters.substring(0, filters.length() - 1)));
                 startActivity(intent);
                 finish();
             }

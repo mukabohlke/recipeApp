@@ -35,7 +35,7 @@
                 android:id="@+id/title_card_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/grey"
+                android:background="@drawable/gradiente"
                 android:paddingLeft="7dp"
                 android:paddingTop="10dp"
                 android:paddingRight="15dp"

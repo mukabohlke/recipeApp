@@ -105,7 +105,7 @@ public class Home extends Fragment {
         //pegar dados do Google
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getContext());
         if (acct != null) {
-            String userName ="Bem vindo, " + acct.getDisplayName();
+            String userName ="Welcome, " + acct.getDisplayName();
             Uri personPhoto = acct.getPhotoUrl();
 
             user.setText(userName);
@@ -117,11 +117,7 @@ public class Home extends Fragment {
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                switch (v.getId()) {
-                    case R.id.home_logout_id:
-                        signOut();
-                        break;
-                }
+                signOut();
             }
         });
 
@@ -130,7 +126,7 @@ public class Home extends Fragment {
             public void onClick(View v) {
                 searchText = input.getText().toString();
                 if (searchText.equals("")){
-                    Toast.makeText(getContext(),"Texto em branco!",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(),"Blank text!",Toast.LENGTH_SHORT).show();
                 } else{
                     input.setText("");
                     Intent intent = new Intent(getContext(), ResultsActivity.class);
@@ -138,7 +134,6 @@ public class Home extends Fragment {
                     intent.putExtra("filters", "");
                     getContext().startActivity(intent);
                 }
-
             }
         });
 
@@ -176,7 +171,7 @@ public class Home extends Fragment {
             @Override
             public void onResponse(Call<ReceitaWrapper> call, Response<ReceitaWrapper> response) {
                 if(!response.isSuccessful()){
-                    Toast.makeText(getContext(),"Ocorreu algum erro!",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(),"Something wrong!",Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -184,7 +179,7 @@ public class Home extends Fragment {
                 List<Receita> receitas = response.body().getReceita();
 
                 if(receitas.size()==0){
-                    Toast.makeText(getContext(),"Nada encontrado!",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(),"Nothing found!",Toast.LENGTH_SHORT).show();
                 }
 
                 for(int i=0; i<receitas.size();i++){
@@ -196,7 +191,7 @@ public class Home extends Fragment {
 
             @Override
             public void onFailure(Call<ReceitaWrapper> call, Throwable t) {
-                Toast.makeText(getContext(),"Ocorreu algum erro!",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(),"Something wrong!",Toast.LENGTH_SHORT).show();
             }
 
         });

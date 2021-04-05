@@ -41,7 +41,7 @@
                 android:paddingRight="15dp"
                 android:paddingBottom="20dp"
                 android:text="TextView"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:textStyle="bold" />
 
         </LinearLayout>

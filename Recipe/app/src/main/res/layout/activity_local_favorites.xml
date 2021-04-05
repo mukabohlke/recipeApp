@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    tools:context=".ResultsActivity">
+    android:layout_height="match_parent"
+    tools:context=".LocalFavoritesActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,48 +14,39 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/primary"
             android:orientation="horizontal"
             android:clipChildren="false"
             android:clipToPadding="false">
 
-            <ImageView
-                android:id="@+id/results_back_id"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_gravity="center"
-                android:layout_marginLeft="20dp"
-                app:srcCompat="@drawable/ic_back"
-                android:foreground="?attr/selectableItemBackgroundBorderless"/>
-
             <LinearLayout
-                android:layout_width="match_parent"
+                android:id="@+id/local_favorites_linear_id"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="20dp"
                 android:layout_marginRight="20dp"
-                android:layout_marginBottom="10dp"
                 android:layout_weight="1"
                 android:background="@drawable/edit_text_style"
-                android:orientation="horizontal"
                 android:clipChildren="false"
-                android:clipToPadding="false">
+                android:clipToPadding="false"
+                android:orientation="horizontal">
 
                 <ImageView
+                    android:id="@+id/local_favorites_search_id"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:layout_gravity="center"
                     android:layout_margin="7dp"
-                    android:src="@drawable/ic_search"
-                    android:id="@+id/results_search"
-                    android:foreground="?attr/selectableItemBackgroundBorderless"/>
+                    android:foreground="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_search" />
 
                 <EditText
-                    android:id="@+id/results_input_id"
+                    android:id="@+id/local_favorites_input_id"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
                     android:layout_marginLeft="5dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="3dp"
                     android:background="@null"
                     android:hint="Find your recipe"
                     android:inputType="textPersonName"
@@ -64,24 +55,24 @@
             </LinearLayout>
 
             <ImageView
-                android:id="@+id/results_filter_id"
+                android:id="@+id/local_favorites_home_id"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
-                android:layout_gravity="center"
+                android:layout_marginTop="27dp"
                 android:layout_marginRight="20dp"
-                app:srcCompat="@drawable/ic_filter"
-                android:foreground="?attr/selectableItemBackgroundBorderless"/>
+                app:srcCompat="@drawable/ic_home"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                />
 
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/results_recycler_id"
+            android:id="@+id/local_favorites_recycler_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="0dp"
             android:layout_marginTop="20dp"
             android:layout_marginRight="0dp"
             android:scrollbars="vertical" />
-
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

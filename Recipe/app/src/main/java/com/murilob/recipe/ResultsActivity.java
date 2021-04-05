@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,33 +25,37 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ResultsActivity extends AppCompatActivity {
-    private TextView search;
+    private EditText input;
     private ImageView back;
     private RecyclerView listTwoRecipes;
     private DataAdapter dataAdapter;
     private ImageView filter;
+    private ImageView search;
+    private String searchText = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_results);
 
-        search = (TextView) findViewById(R.id.favorites_textview_id);
+        input = (EditText) findViewById(R.id.results_input_id);
         back = (ImageView) findViewById(R.id.results_back_id);
         listTwoRecipes = (RecyclerView) findViewById(R.id.results_recycler_id);
         filter = (ImageView) findViewById(R.id.results_filter_id);
+        search = (ImageView) findViewById(R.id.results_search);
 
         //Modo escuro
         if ((getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK)==Configuration.UI_MODE_NIGHT_YES) {
-            search.setTextColor(ContextCompat.getColor(this, R.color.black));
+            input.setTextColor(ContextCompat.getColor(this, R.color.black));
         }
 
         //texto procurado
         Intent intent = getIntent();
-        search.setText(intent.getExtras().getString("search"));
+        input.setText(intent.getExtras().getString("search"));
+        searchText = getIntent().getExtras().getString("search");
 
         //função para consumir API com o resultado da busca
-        getDados(intent.getExtras().getString("search"), intent.getExtras().getString("filters"));
+        getDados(searchText, intent.getExtras().getString("filters"));
 
         //funções de clique dos botões
         back.setOnClickListener(new View.OnClickListener() {
@@ -60,11 +65,25 @@ public class ResultsActivity extends AppCompatActivity {
             }
         });
 
+        search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchText = input.getText().toString();
+                if (searchText.equals("")){
+                    Toast.makeText(v.getContext(),"Blank text!",Toast.LENGTH_SHORT).show();
+                } else{
+                    //função para consumir API com o resultado da busca
+                    getDados(searchText, intent.getExtras().getString("filters"));
+                }
+
+            }
+        });
+
         filter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), FilterActivity.class);
-                intent.putExtra("search", getIntent().getExtras().getString("search"));
+                intent.putExtra("search", searchText);
                 startActivity(intent);
                 finish();
             }
@@ -91,7 +110,7 @@ public class ResultsActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ReceitaWrapper> call, Response<ReceitaWrapper> response) {
                 if (!response.isSuccessful()) {
-                    Toast.makeText(cont, "Ocorreu algum erro!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(cont, "Something wrong!", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -99,7 +118,7 @@ public class ResultsActivity extends AppCompatActivity {
                 List<Receita> receitas = response.body().getReceita();
 
                 if (receitas.size() == 0) {
-                    Toast.makeText(cont, "Nada encontrado!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(cont, "Nothing found!", Toast.LENGTH_SHORT).show();
                 }
 
                 for (int i = 0; i < receitas.size(); i++) {
@@ -111,7 +130,7 @@ public class ResultsActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ReceitaWrapper> call, Throwable t) {
-                Toast.makeText(cont, "Ocorreu algum erro!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(cont, "Nothing found!", Toast.LENGTH_SHORT).show();
             }
         });
     }
